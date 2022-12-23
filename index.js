@@ -13,16 +13,18 @@ express()
   .get('/', async (req, res) => {
     const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
     const page = await browser.newPage();
-    await page.setViewport({ width: 600, height: 800 });
-    await page.goto(process.env.SCREENSHOT_URL || 'https://darksky.net/details/40.7127,-74.0059/2021-1-6/us12/en');
-    await page.screenshot({
-      path: '/tmp/screenshot.png',
+    await page.setViewport({ width: 1280, height: 1024 });
+    await page.goto(process.env.SCREENSHOT_URL || 'https://www.cwb.gov.tw/V8/C/W/County/County.html?CID=63');
+    await page.waitForSelector('#PC_Week_MOD');
+    const logo = await page.$('#PC_Week_MOD');
+    await logo.screenshot({
+      path: './screenshot.png',
     });
 
     await browser.close();
 
-    await convert('/tmp/screenshot.png');
-    screenshot = fs.readFileSync('/tmp/screenshot.png');
+    await convert('./screenshot.png');
+    screenshot = fs.readFileSync('./screenshot.png');
 
     res.writeHead(200, {
       'Content-Type': 'image/png',
